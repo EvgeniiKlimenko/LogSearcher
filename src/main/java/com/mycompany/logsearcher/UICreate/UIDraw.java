@@ -30,28 +30,43 @@ public class UIDraw {
     public TextField drawPathTextField(){
         TextField txt = new TextField();
         txt.setPromptText("Full path to folder with log files...");
-        txt.setMaxSize(60, 15);
+        txt.setPrefSize(500, 25);
         return txt;
     }
     
     public TextField drawTextToSearchField(){
         TextField txt = new TextField();
         txt.setPromptText("Enter text here.");
-        txt.setMaxSize(60, 15);
+        txt.setPrefSize(500, 25);
         return txt;
     }
     
     public TextArea drawFileContentArea(){
         TextArea fileContent = new TextArea();
         fileContent.setPromptText("File's content here.");
-        fileContent.setMaxSize(500, 900);
+        fileContent.setPrefSize(600, 800);
         
+        //fileContent.setFont(font);
+        fileContent.setWrapText(true); //...the text should wrap onto another line on area borders. 
         return fileContent;
+    }
+    
+    public TextArea drawCopyTextArea(){
+        TextArea copyContent = new TextArea();
+        copyContent.setPromptText("Copy here selected text.");
+        copyContent.setPrefSize(400, 600);
+        copyContent.setEditable(true);
+        
+        //fileContent.setFont(font);
+        copyContent.setWrapText(true); //...the text should wrap onto another line on area borders. 
+        return copyContent;
     }
     
     public ListView drawFilesListView(){
         ListView filesFound = new ListView();
-        filesFound.setMaxSize(650, 300);
+        filesFound.setMaxWidth(500);
+        //filesFound.setMinSize(800, 300);
+        filesFound.setPrefSize(500, 300);
         return filesFound;
     }
     

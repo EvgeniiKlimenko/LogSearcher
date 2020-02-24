@@ -5,9 +5,11 @@
  */
 package com.mycompany.logsearcher;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -20,8 +22,10 @@ import javafx.scene.control.TextArea;
  * @author brokenhead
  */
 public class Controller {
-    private Scanner scnr;
-    private FileInputStream is;
+
+    private FileReader fr;
+    private BufferedReader br;
+    boolean isFound = false;
 
     public ArrayList processPath(String enteredPath) {
         File requestedPath = new File(enteredPath);
@@ -31,8 +35,10 @@ public class Controller {
             if (isDir) {
                 File[] filesList = requestedPath.listFiles();
                 for (File fl : filesList) {
-                    String ap = fl.getAbsolutePath();
-                    al.add(ap);
+                    if (fl.isFile()) {
+                        String ap = fl.getName();
+                        al.add(ap);
+                    }
                 }
                 return al;
             } else {
@@ -44,50 +50,70 @@ public class Controller {
         return al;
     }
 
-    public void readFileFirstTime(String path, String text, TextArea fileContentArea) {
-        boolean isFound = false;
+    public void readFileFirstTime(String basicPath, String path, String text, TextArea fileContentArea) {
+        System.out.println("readFileFirstTime() method");
+        isFound = false;
+        System.out.println(basicPath + File.separator + path); // The system-dependent default name-separator character
         try {
             // first clean previous file shit
-            if (is != null) {// first clean previous file shit
-                is.close();
+            if (fr != null) {// first clean previous file shit
+                fr.close();
             }
-            if (scnr != null) {
-                scnr.close();
+            if (br != null) {
+                br.close();
             }
             // then create new 
+            fr = new FileReader(basicPath + File.separator + path);
+            br = new BufferedReader(fr);
 
-            is = new FileInputStream(path);
-            scnr = new Scanner(is, "UTF-8");
-            while (scnr.hasNextLine() && !isFound) {
-                String line = scnr.nextLine();
-                fileContentArea.appendText(line);   // first append..
+            while (!isFound) {                  // br.hasNextLine() && 
+                String line = br.readLine();
+                if (line == null) {
+                    break;
+                }
+                fileContentArea.appendText(line + "\n");
                 if (line.contains(text)) {            // then search and hightlight
                     isFound = true;
                     // highlight founded word(s)
                 }
-                //fileContentArea.appendText(line);
             }
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-            scnr.close();
+            System.out.println("----->... end");
         } catch (IOException ex) {
-            ex.printStackTrace();
             try {
-                is.close();
+                fr.close();
+                br.close();
             } catch (IOException ex1) {
                 ex1.printStackTrace();
             }
+
         }
     }
 
     public void readFileAgain(String text, TextArea fileContentArea) {
-        boolean isFound = false;
-        while (scnr.hasNextLine() && !isFound) {
-            String line = scnr.nextLine();
-            if (line.contains(text)) {
-                isFound = true;
+        System.out.println("readFileAgain() method");
+        isFound = false;
+        try {
+            while (!isFound) {
+                System.out.println("readFileAgain() - > while(){}");
+                String line = br.readLine();
+                if (line == null) {
+                    System.out.println("readFileAgain() - > if line empty");
+                    break;  // if null => reached end of file
+                }
+                fileContentArea.appendText(line + "\n");
+                if (line.contains(text)) {            // then search and hightlight
+                    System.out.println("readFileAgain() - > find text");
+                    isFound = true;
+                    // highlight founded word(s)
+                }
             }
-            fileContentArea.appendText(line);
+        } catch (IOException ex) {
+            try {
+                fr.close();
+                br.close();
+            } catch (IOException ex1) {
+                ex1.printStackTrace();
+            }
         }
     }
 
