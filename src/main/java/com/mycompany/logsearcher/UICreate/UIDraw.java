@@ -51,21 +51,18 @@ public class UIDraw {
         return fileContent;
     }
     
-    public TextArea drawCopyTextArea(){
+    public TextArea drawNotesTextArea(){
         TextArea copyContent = new TextArea();
-        copyContent.setPromptText("Copy here selected text.");
+        copyContent.setPromptText("Save here selected text from different files.");
         copyContent.setPrefSize(400, 600);
         copyContent.setEditable(true);
-        
-        //fileContent.setFont(font);
-        copyContent.setWrapText(true); //...the text should wrap onto another line on area borders. 
+        copyContent.setWrapText(true); //...the text should wrap onto another line by area borders. 
         return copyContent;
     }
     
     public ListView drawFilesListView(){
         ListView filesFound = new ListView();
         filesFound.setMaxWidth(500);
-        //filesFound.setMinSize(800, 300);
         filesFound.setPrefSize(500, 300);
         return filesFound;
     }
