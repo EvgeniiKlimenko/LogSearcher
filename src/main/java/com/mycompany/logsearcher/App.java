@@ -8,7 +8,9 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import com.mycompany.logsearcher.UICreate.UIDraw;
-import com.mycompany.logsearcher.FilesWork.TextSearch;
+import com.mycompany.logsearcher.SearchEngine.TextSearch;
+import com.mycompany.logsearcher.SearchEngine.FilesHandler;
+import com.mycompany.logsearcher.SearchEngine.FoundFile;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -37,9 +39,9 @@ ObservableList<T> content = ...
  listView.setItems(content);
  */
 public class App extends Application {
-
+    private FoundFile currentSelectedFile;
     private final UIDraw drawUI = new UIDraw();
-    private final SearchAndReadFile filesWork = new SearchAndReadFile();
+    private final FilesHandler filesWork = new FilesHandler();
     private final TextSearch search = new TextSearch();
     private ObservableList<String> files = FXCollections.observableArrayList("No results yet."); // default value
     private boolean isFilePathChanged = false;
@@ -54,7 +56,6 @@ public class App extends Application {
         Label listFilesLabel = new Label("Text log files found:");
         Label textToFindLabel = new Label("Text to find:");
         Label notesTextLabel = new Label("Saved notes:");
-
         //???
         Label fileSizeLabel = new Label("Curret file size:");
 
@@ -71,7 +72,6 @@ public class App extends Application {
         ListView foundFilesView = drawUI.drawFilesListView();
         foundFilesView.setItems(files);
 
-        //on selection changed - reset flag.
         foundFilesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue ov, Object t, Object t1) {
@@ -80,7 +80,7 @@ public class App extends Application {
                 fileContentArea.clear();
                 String basicPath = pathInputField.getText();
                 String selectedFile = (String) foundFilesView.getSelectionModel().getSelectedItem();// get file's name
-                filesWork.readWholeFile(basicPath, selectedFile, textInputField.getText(), fileContentArea);
+                filesWork.readWholeFile(basicPath, selectedFile, fileContentArea);
                 search.dropSearchIndex();
             }
         });
@@ -146,8 +146,6 @@ public class App extends Application {
         secondPane.add(fileContentArea, 0, 3, 3, 1);
         secondPane.add(fileSizeLabel, 0, 4);
 
-        //VBox thirdPane = new VBox(20);
-        //thirdPane.getChildren().addAll(copyTextArea);
         mainPane.getChildren().addAll(firstPane, secondPane);
 
         var scene = new Scene(mainPane, 1400, 900);

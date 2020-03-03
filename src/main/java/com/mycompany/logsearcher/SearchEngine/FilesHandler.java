@@ -3,30 +3,36 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.logsearcher;
+package com.mycompany.logsearcher.SearchEngine;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.control.TextArea;
 
 /**
  *
  * @author brokenhead
  */
-public class SearchAndReadFile {
-
+public class FilesHandler {
+    //key - path; value - FoundFile.obj
+    private Map<String, FoundFile> processedFiles = new HashMap<>();
     private FileReader fr;
     private BufferedReader br;
     boolean isFound = false;
-    private long currentIndex = 0;
+    
+    public FoundFile checkAlreadyRead(String path){
+    
+        FoundFile ff = processedFiles.get(path);
+    return ff;
+    }
 
     public ArrayList processPath(String enteredPath) {
         File requestedPath = new File(enteredPath);
@@ -51,8 +57,8 @@ public class SearchAndReadFile {
         return al;
     }
 
-
-    public void readWholeFile(String basicPath, String path, String text, TextArea fileContentArea) {
+    // Create FoundFile here
+    public void readWholeFile(String basicPath, String path, TextArea fileContentArea) {
         isFound = false;
         System.out.println(basicPath + File.separator + path); // The system-dependent default name-separator character
         try {
@@ -63,22 +69,19 @@ public class SearchAndReadFile {
             if (br != null) {
                 br.close();
             }
-            // then create new 
-            fr = new FileReader(basicPath + File.separator + path);
+            // then create new
+            String fullPath = basicPath + File.separator + path;
+            File requestedFile = new File(fullPath);
+            fr = new FileReader(requestedFile);
             br = new BufferedReader(fr);
             String line;
             StringBuilder sb = new StringBuilder();
             while ((line = br.readLine())!=null ) {                 
                 sb.append(line).append("\n");
-                
-                /*
-                if (text.trim().length() != 0 && line.contains(text)) {
-                    
-                }
-                */
             }
             fileContentArea.appendText(sb.toString());
-            
+            FoundFile ff = new FoundFile(fullPath, fileContentArea.getLength());
+            processedFiles.put(fullPath, ff);
         } catch (IOException ex) {
             try {
                 fr.close();

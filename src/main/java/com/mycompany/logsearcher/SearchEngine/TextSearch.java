@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.logsearcher.FilesWork;
+package com.mycompany.logsearcher.SearchEngine;
 
 import javafx.scene.control.TextArea;
 
@@ -12,7 +12,7 @@ import javafx.scene.control.TextArea;
  * @author brokenhead
  */
 public class TextSearch {
-    private long index = 0;
+    private int index = 0;
     
     
     public void findNextMatch(String text, TextArea fileContentArea){
