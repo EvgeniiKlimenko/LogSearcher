@@ -11,10 +11,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
+
 import javafx.scene.control.TextArea;
 
 /**
@@ -27,13 +25,24 @@ public class FilesHandler {
     private FileReader fr;
     private BufferedReader br;
     boolean isFound = false;
-    
-    public FoundFile checkAlreadyRead(String path){
-    
-        FoundFile ff = processedFiles.get(path);
-    return ff;
+
+    private boolean isNewFile(String path) {
+        boolean check = processedFiles.containsKey(path);
+        //FoundFile ff = processedFiles.get(path);
+        if (!check) {
+            System.out.println("----> File is new!");
+            return true;
+        } else {
+            System.out.println("----> File is old!");
+            return false;
+        }
     }
 
+    public FoundFile getSavedFile(String path) {
+        FoundFile ff = processedFiles.get(path);
+        return ff;
+    }
+    
     public ArrayList processPath(String enteredPath) {
         File requestedPath = new File(enteredPath);
         ArrayList<String> al = new ArrayList();
@@ -58,8 +67,9 @@ public class FilesHandler {
     }
 
     // Create FoundFile here
-    public void readWholeFile(String basicPath, String path, TextArea fileContentArea) {
+    public FoundFile readWholeFile(String basicPath, String path, TextArea fileContentArea) {
         isFound = false;
+        FoundFile ff = null;
         System.out.println(basicPath + File.separator + path); // The system-dependent default name-separator character
         try {
             // first clean previous file shit
@@ -76,12 +86,21 @@ public class FilesHandler {
             br = new BufferedReader(fr);
             String line;
             StringBuilder sb = new StringBuilder();
-            while ((line = br.readLine())!=null ) {                 
+            while ((line = br.readLine()) != null) {
                 sb.append(line).append("\n");
             }
             fileContentArea.appendText(sb.toString());
-            FoundFile ff = new FoundFile(fullPath, fileContentArea.getLength());
-            processedFiles.put(fullPath, ff);
+            
+            System.out.println("File: " + fullPath + " Lenght: " + fileContentArea.getLength());
+            if (isNewFile(fullPath)) {
+                ff = new FoundFile(fullPath, fileContentArea.getLength());
+                processedFiles.put(fullPath, ff);
+                System.out.println("----> New FoundFile created");
+            } else {
+                ff = processedFiles.get(fullPath);
+                System.out.println("----> Old FoundFile returned");
+            }
+            
         } catch (IOException ex) {
             try {
                 fr.close();
@@ -91,33 +110,7 @@ public class FilesHandler {
             }
             fileContentArea.appendText("Something went wrong. I can't read this file.");
         }
-    }
-
-    public void readFileAgain(String text, TextArea fileContentArea) {
-        isFound = false;
-        try {
-            while (!isFound) {
-                String line = br.readLine();
-                if (line == null) {
-                    break;  // if null => reached end of file
-                }
-                fileContentArea.appendText(line + "\n");
-                if (text.trim().length() != 0 && line.contains(text)) {  // then search and hightlight
-                    System.out.println("Text found! Reading is stopped");
-                    isFound = true;
-                    // highlight founded word(s)
-                }
-            }
-        } catch (IOException ex) {
-            try {
-                fr.close();
-                br.close();
-            } catch (IOException ex1) {
-                ex1.printStackTrace();
-            }
-        }
+        return ff;
     }
     
-    
-
 }

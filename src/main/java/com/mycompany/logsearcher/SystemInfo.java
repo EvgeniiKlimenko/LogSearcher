@@ -11,6 +11,6 @@ public class SystemInfo {
     }
 
     public static String appVersion() {
-        return "v0.2";
+        return "v0.3";
     }
 }

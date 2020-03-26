@@ -5,6 +5,8 @@
  */
 package com.mycompany.logsearcher.SearchEngine;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.scene.control.TextArea;
 
 /**
@@ -12,18 +14,30 @@ import javafx.scene.control.TextArea;
  * @author brokenhead
  */
 public class TextSearch {
-    private int index = 0;
+
+    /*
+    String text = "I love you so much";
+    String wordToFind = "love";
+    Pattern word = Pattern.compile(wordToFind);
+    Matcher match = word.matcher(text);
+
+while (match.find()) {
+     int end = matcher.end();
+     int start = matcher.start();
+     file.
+}
     
-    
-    public void findNextMatch(String text, TextArea fileContentArea){
-        
+     */
+    public void doSearch(FoundFile file, TextArea fileContentArea, String textToSearch) {
+        Pattern textPattern = Pattern.compile(textToSearch);
+        Matcher matcher = textPattern.matcher(fileContentArea.getText());
+        while (matcher.find()) {
+            //int end = matcher.end();
+            int start = matcher.start();
+            file.addIndex(start);
+            System.out.println("Found match at: " + start);
+        }
+        // point to the first found, maybe
     }
-    
-    public void findPrevMatch(String text, TextArea fileContentArea){
-        
-    }
-    
-    public void dropSearchIndex(){
-        index = 0;
-    }
+
 }
